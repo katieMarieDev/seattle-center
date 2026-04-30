@@ -69,15 +69,19 @@ export function useEventbriteEvents() {
         'start_date.range_end': sevenDays.toISOString().split('.')[0] + 'Z',
         'expand': 'venue',
         'page_size': 50,
-        'token': API_KEY,
-        // Only big-event categories: music, arts, sports, food & drink, film
         'categories': '103,104,105,108,110',
-        // Only festival, performance, expo, screening formats
         'formats': '3,5,6,7',
       });
 
-      const res = await fetch(`/eventbrite/events/search/?${params}`);
-      if (!res.ok) return;
+      const res = await fetch(`/eventbrite/events/search/?${params}`, {
+        headers: { 'Authorization': `Bearer ${API_KEY}` },
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        console.error('Eventbrite error:', res.status, text);
+        return;
+      }
       const data = await res.json();
 
       const filtered = (data.events || []).filter(e => {

@@ -115,7 +115,7 @@ export default function App() {
         </details>
       )}
       <footer className="app-footer">
-        <span>Data via Ticketmaster</span>
+        <span>Data via Ticketmaster{ebEvents.length > 0 ? ' & Eventbrite' : ''}</span>
         {updatedAt && (
           <span>Updated {updatedAt.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit' })}</span>
         )}
