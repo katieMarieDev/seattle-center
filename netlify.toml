@@ -1,4 +1,10 @@
 [[redirects]]
+  from = "/discovery/*"
+  to = "https://app.ticketmaster.com/discovery/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
