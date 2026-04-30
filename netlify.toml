@@ -5,6 +5,12 @@
   force = true
 
 [[redirects]]
+  from = "/eventbrite/*"
+  to = "https://www.eventbriteapi.com/v3/:splat"
+  status = 200
+  force = true
+
+[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200

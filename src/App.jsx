@@ -1,5 +1,6 @@
 import React, { useState, useRef } from 'react';
 import { useEvents } from './hooks/useEvents.js';
+import { useEventbriteEvents } from './hooks/useEventbriteEvents.js';
 import { calculateThreatLevel, getVenueCategory } from './threatLogic.js';
 import ThreatGauge from './components/ThreatGauge.jsx';
 import EventList from './components/EventList.jsx';
@@ -15,7 +16,9 @@ function getNext7Days() {
 }
 
 export default function App() {
-  const { events, loading, error, updatedAt, refetch } = useEvents();
+  const { events: tmEvents, loading, error, updatedAt, refetch } = useEvents();
+  const ebEvents = useEventbriteEvents();
+  const events = [...tmEvents, ...ebEvents];
   const [selectedDate, setSelectedDate] = useState(
     new Date().toLocaleDateString('en-CA')
   );
