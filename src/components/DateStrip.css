@@ -1,0 +1,73 @@
+.date-strip {
+  display: flex;
+  gap: 0.5rem;
+  padding: 1rem 1.5rem 0.5rem;
+  overflow-x: auto;
+  scrollbar-width: none;
+  max-width: 540px;
+  margin: 0 auto;
+}
+
+.date-strip::-webkit-scrollbar {
+  display: none;
+}
+
+.date-pill {
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  padding: 0.5rem 0.85rem;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text-muted);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  transition: all 0.15s;
+  min-width: 64px;
+}
+
+.date-pill:hover {
+  border-color: var(--text-dim);
+  color: var(--text);
+}
+
+.date-pill.selected {
+  background: var(--surface2);
+  border-color: var(--text-muted);
+  color: var(--text);
+}
+
+.date-top {
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.date-sub {
+  font-size: 0.62rem;
+  color: var(--text-dim);
+}
+
+.date-pill.selected .date-sub {
+  color: var(--text-muted);
+}
+
+.date-count {
+  margin-top: 0.2rem;
+  font-size: 0.6rem;
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  color: var(--text-muted);
+  border-radius: 10px;
+  padding: 0 6px;
+  line-height: 1.6;
+}
+
+.date-pill.selected .date-count {
+  background: var(--text-muted);
+  color: var(--bg);
+  border-color: transparent;
+}

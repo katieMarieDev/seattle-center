@@ -2,11 +2,10 @@ import { useState, useEffect } from 'react';
 import { SEATTLE_CENTER_LAT, SEATTLE_CENTER_LNG, RADIUS_MILES } from '../threatLogic.js';
 
 const API_KEY = import.meta.env.VITE_TICKETMASTER_KEY;
-const BASE_URL = 'https://app.ticketmaster.com/discovery/v2/events.json';
+const BASE_URL = '/discovery/v2/events.json';
 
 export function useEvents() {
   const [events, setEvents] = useState([]);
-  const [todayEvents, setTodayEvents] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [updatedAt, setUpdatedAt] = useState(null);
@@ -36,9 +35,8 @@ export function useEvents() {
         unit: 'miles',
         startDateTime: now.toISOString().replace(/\.\d{3}Z$/, 'Z'),
         endDateTime: sevenDays.toISOString().replace(/\.\d{3}Z$/, 'Z'),
-        size: 50,
+        size: 200,
         sort: 'date,asc',
-        classificationName: 'music,sports,arts',
       });
 
       const res = await fetch(`${BASE_URL}?${params}`);
@@ -46,13 +44,7 @@ export function useEvents() {
       const data = await res.json();
 
       const allEvents = data?._embedded?.events || [];
-
-      // Filter to today for hero section
-      const todayStr = now.toLocaleDateString('en-CA'); // YYYY-MM-DD
-      const todays = allEvents.filter(e => e.dates?.start?.localDate === todayStr);
-
       setEvents(allEvents);
-      setTodayEvents(todays);
       setUpdatedAt(new Date());
     } catch (err) {
       console.error(err);
@@ -62,5 +54,5 @@ export function useEvents() {
     }
   }
 
-  return { events, todayEvents, loading, error, updatedAt, refetch: fetchEvents };
+  return { events, loading, error, updatedAt, refetch: fetchEvents };
 }

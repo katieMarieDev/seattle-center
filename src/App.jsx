@@ -1,13 +1,50 @@
-import React from 'react';
+import React, { useState, useRef } from 'react';
 import { useEvents } from './hooks/useEvents.js';
-import { calculateThreatLevel } from './threatLogic.js';
+import { calculateThreatLevel, getVenueCategory } from './threatLogic.js';
 import ThreatGauge from './components/ThreatGauge.jsx';
 import EventList from './components/EventList.jsx';
+import DateStrip from './components/DateStrip.jsx';
 import './App.css';
 
+function getNext7Days() {
+  return Array.from({ length: 7 }, (_, i) => {
+    const d = new Date();
+    d.setDate(d.getDate() + i);
+    return d.toLocaleDateString('en-CA');
+  });
+}
+
 export default function App() {
-  const { events, todayEvents, loading, error, updatedAt, refetch } = useEvents();
-  const threat = calculateThreatLevel(todayEvents.length > 0 ? todayEvents : events.slice(0, 3));
+  const { events, loading, error, updatedAt, refetch } = useEvents();
+  const [selectedDate, setSelectedDate] = useState(
+    new Date().toLocaleDateString('en-CA')
+  );
+  const touchStartX = useRef(null);
+  const dates = getNext7Days();
+
+  const eventCounts = Object.fromEntries(
+    dates.map(d => [d, events.filter(e => e.dates?.start?.localDate === d).length])
+  );
+
+  const selectedEvents = events.filter(e => e.dates?.start?.localDate === selectedDate);
+  const seattleCenterEvents = selectedEvents.filter(e => getVenueCategory(e) === 'SEATTLE_CENTER');
+  const nearbyEvents = selectedEvents.filter(e => getVenueCategory(e) !== 'SEATTLE_CENTER');
+  const threat = calculateThreatLevel(seattleCenterEvents);
+
+  function handleTouchStart(e) {
+    touchStartX.current = e.touches[0].clientX;
+  }
+
+  function handleTouchEnd(e) {
+    if (touchStartX.current === null) return;
+    const diff = touchStartX.current - e.changedTouches[0].clientX;
+    if (Math.abs(diff) > 50) {
+      const idx = dates.indexOf(selectedDate);
+      if (diff > 0 && idx < dates.length - 1) setSelectedDate(dates[idx + 1]);
+      if (diff < 0 && idx > 0) setSelectedDate(dates[idx - 1]);
+    }
+    touchStartX.current = null;
+  }
 
   if (loading) {
     return (
@@ -44,9 +81,24 @@ export default function App() {
   }
 
   return (
-    <div className="app">
-      <ThreatGauge threat={threat} todayEvents={todayEvents} />
-      <EventList events={events} />
+    <div className="app" onTouchStart={handleTouchStart} onTouchEnd={handleTouchEnd}>
+      <DateStrip
+        dates={dates}
+        selectedDate={selectedDate}
+        onSelect={setSelectedDate}
+        eventCounts={eventCounts}
+      />
+      <ThreatGauge threat={threat} selectedDate={selectedDate} />
+      <EventList events={seattleCenterEvents} title="At Seattle Center" />
+      {nearbyEvents.length > 0 && (
+        <details className="nearby-section">
+          <summary className="nearby-summary">
+            Also nearby
+            <span className="nearby-count">{nearbyEvents.length} event{nearbyEvents.length !== 1 ? 's' : ''}</span>
+          </summary>
+          <EventList events={nearbyEvents} hideHeader />
+        </details>
+      )}
       <footer className="app-footer">
         <span>Data via Ticketmaster</span>
         {updatedAt && (

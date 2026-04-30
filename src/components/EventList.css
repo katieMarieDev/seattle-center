@@ -24,6 +24,13 @@
   color: var(--text-dim);
 }
 
+.event-flat-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding-top: 0.5rem;
+}
+
 /* Day group */
 .day-group {
   border-bottom: 1px solid var(--border);
