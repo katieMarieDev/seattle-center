@@ -1,0 +1,51 @@
+.neighborhood-picker {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: center;
+  flex-wrap: wrap;
+  max-width: 540px;
+  margin: 0 auto;
+  padding: 1.25rem 1.5rem 0.5rem;
+}
+
+.neighborhood-pill {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.45rem 0.9rem;
+  border-radius: 20px;
+  border: 1px solid var(--border);
+  background: none;
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  transition: all 0.15s;
+  white-space: nowrap;
+}
+
+.neighborhood-pill:hover {
+  border-color: var(--text-dim);
+  color: var(--text);
+}
+
+.neighborhood-pill.selected {
+  background: var(--surface2);
+  border-color: var(--text-muted);
+  color: var(--text);
+}
+
+.neighborhood-count {
+  font-size: 0.6rem;
+  background: var(--border);
+  color: var(--text-muted);
+  border-radius: 10px;
+  padding: 1px 6px;
+  line-height: 1.6;
+}
+
+.neighborhood-pill.selected .neighborhood-count {
+  background: var(--text-muted);
+  color: var(--bg);
+}

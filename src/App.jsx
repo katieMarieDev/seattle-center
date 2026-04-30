@@ -5,6 +5,7 @@ import { calculateThreatLevel, getVenueCategory } from './threatLogic.js';
 import ThreatGauge from './components/ThreatGauge.jsx';
 import EventList from './components/EventList.jsx';
 import DateStrip from './components/DateStrip.jsx';
+import NeighborhoodPicker, { NEIGHBORHOODS } from './components/NeighborhoodPicker.jsx';
 import './App.css';
 
 function getNext7Days() {
@@ -22,6 +23,7 @@ export default function App() {
   const [selectedDate, setSelectedDate] = useState(
     new Date().toLocaleDateString('en-CA')
   );
+  const [selectedNeighborhood, setSelectedNeighborhood] = useState('SEATTLE_CENTER');
   const touchStartX = useRef(null);
   const dates = getNext7Days();
 
@@ -30,9 +32,14 @@ export default function App() {
   );
 
   const selectedEvents = events.filter(e => e.dates?.start?.localDate === selectedDate);
-  const seattleCenterEvents = selectedEvents.filter(e => getVenueCategory(e) === 'SEATTLE_CENTER');
-  const nearbyEvents = selectedEvents.filter(e => getVenueCategory(e) !== 'SEATTLE_CENTER');
-  const threat = calculateThreatLevel(seattleCenterEvents);
+  const neighborhoodCounts = Object.fromEntries(
+    ['SEATTLE_CENTER', 'DOWNTOWN', 'SODO', 'BALLARD', 'UW'].map(id => [
+      id, selectedEvents.filter(e => getVenueCategory(e) === id).length
+    ])
+  );
+  const primaryEvents = selectedEvents.filter(e => getVenueCategory(e) === selectedNeighborhood);
+  const nearbyEvents = selectedEvents.filter(e => getVenueCategory(e) !== selectedNeighborhood);
+  const threat = calculateThreatLevel(primaryEvents);
 
   function handleTouchStart(e) {
     touchStartX.current = e.touches[0].clientX;
@@ -91,8 +98,13 @@ export default function App() {
         onSelect={setSelectedDate}
         eventCounts={eventCounts}
       />
-      <ThreatGauge threat={threat} selectedDate={selectedDate} />
-      <EventList events={seattleCenterEvents} title="At Seattle Center" />
+      <NeighborhoodPicker
+        selected={selectedNeighborhood}
+        onSelect={setSelectedNeighborhood}
+        eventCounts={neighborhoodCounts}
+      />
+      <ThreatGauge threat={threat} selectedDate={selectedDate} neighborhood={selectedNeighborhood} />
+      <EventList events={primaryEvents} title={`In ${NEIGHBORHOODS.find(n => n.id === selectedNeighborhood)?.label}`} />
       {nearbyEvents.length > 0 && (
         <details className="nearby-section">
           <summary className="nearby-summary">

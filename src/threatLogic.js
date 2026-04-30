@@ -60,13 +60,15 @@ export const VENUE_SIZES = {
     '5th Avenue Theatre',
     'Benaroya Hall',
     'Showbox SoDo', 'Showbox SODO',
+    'WaMu Theater', 'WAMU Theater',
     'Alaska Airlines Arena',
     'HEC Edmundson',
   ],
 };
 
 const LOW_IMPACT_KEYWORDS = [
-  'tour', 'behind the scenes', 'ballpark tour', 'stadium tour',
+  'ballpark tour', 'stadium tour', 'arena tour', 'behind the scenes',
+  'facility tour', 'building tour', 'guided tour',
   'clinic', 'meet & greet', 'autograph', 'youth', 'education',
   'fundraiser', 'gala', 'open rehearsal', 'talk', 'lecture',
 ];

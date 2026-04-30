@@ -13,20 +13,29 @@ const STATUS_EMOJI = {
   SAFE:      '🟢',
 };
 
-function formatDateLabel(selectedDate) {
+const NEIGHBORHOOD_LABELS = {
+  SEATTLE_CENTER: 'Seattle Center',
+  DOWNTOWN:       'Downtown',
+  SODO:           'SoDo',
+  BALLARD:        'Ballard',
+  UW:             'U District',
+};
+
+function formatDateLabel(selectedDate, neighborhood) {
   const today = new Date().toLocaleDateString('en-CA');
   const tomorrow = new Date();
   tomorrow.setDate(tomorrow.getDate() + 1);
   const tomorrowStr = tomorrow.toLocaleDateString('en-CA');
+  const place = NEIGHBORHOOD_LABELS[neighborhood] || 'Seattle Center';
 
-  if (selectedDate === today) return 'Tonight at Seattle Center';
-  if (selectedDate === tomorrowStr) return 'Tomorrow at Seattle Center';
+  if (selectedDate === today) return `Tonight · ${place}`;
+  if (selectedDate === tomorrowStr) return `Tomorrow · ${place}`;
 
   const d = new Date(selectedDate + 'T12:00:00');
-  return `${d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })} · Seattle Center`;
+  return `${d.toLocaleDateString('en-US', { weekday: 'long', month: 'short', day: 'numeric' })} · ${place}`;
 }
 
-export default function ThreatGauge({ threat, selectedDate }) {
+export default function ThreatGauge({ threat, selectedDate, neighborhood }) {
   const [animate, setAnimate] = useState(false);
 
   useEffect(() => {
@@ -44,7 +53,7 @@ export default function ThreatGauge({ threat, selectedDate }) {
       <div className="gauge-inner">
         <div className="gauge-header">
           <SpaceNeedle size={22} color="var(--text-dim)" />
-          <span className="gauge-top-label">{formatDateLabel(selectedDate)}</span>
+          <span className="gauge-top-label">{formatDateLabel(selectedDate, neighborhood)}</span>
         </div>
 
         <div className={`gauge-emoji ${isCowboy ? 'cowboy-shake' : ''}`}>
@@ -55,11 +64,6 @@ export default function ThreatGauge({ threat, selectedDate }) {
         <div className="gauge-sublabel">{threat?.sublabel}</div>
 
         <p className="gauge-description">{threat?.description}</p>
-
-        <div className="gauge-advice-box" style={{ borderColor: threat?.color }}>
-          <span className="gauge-advice-prefix">Suggestion</span>
-          <span className="gauge-advice-text">{threat?.advice}</span>
-        </div>
       </div>
     </div>
   );
