@@ -70,13 +70,22 @@ export function useEventbriteEvents() {
         'expand': 'venue',
         'page_size': 50,
         'token': API_KEY,
+        // Only big-event categories: music, arts, sports, food & drink, film
+        'categories': '103,104,105,108,110',
+        // Only festival, performance, expo, screening formats
+        'formats': '3,5,6,7',
       });
 
       const res = await fetch(`/eventbrite/events/search/?${params}`);
       if (!res.ok) return;
       const data = await res.json();
 
-      const normalized = (data.events || []).map(normalizeEvent);
+      const filtered = (data.events || []).filter(e => {
+        // Skip if capacity is set and tiny (small private events)
+        if (e.capacity && e.capacity < 100) return false;
+        return true;
+      });
+      const normalized = filtered.map(normalizeEvent);
       setEvents(normalized);
     } catch (err) {
       console.error('Eventbrite fetch failed:', err);
